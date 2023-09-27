@@ -1,0 +1,2 @@
+[run]
+omit = ./feddit/main.py,*/__init__.py
