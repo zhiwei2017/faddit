@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>feddit.app.utils.logging &mdash; Fake reddit API 0.1.0 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Fake reddit API
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../01_about.html">Fake reddit API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../02_usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../03_source.html">Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../04_authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../05_contributing.html">Contributing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Fake reddit API</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">feddit.app.utils.logging</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for feddit.app.utils.logging</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Define logging related utility functions and classes.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">click</span>
+<span class="kn">from</span> <span class="nn">http</span> <span class="kn">import</span> <span class="n">HTTPStatus</span>
+<span class="kn">from</span> <span class="nn">fastapi</span> <span class="kn">import</span> <span class="n">Request</span><span class="p">,</span> <span class="n">Response</span>
+
+<span class="n">status_code_colors</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">code</span><span class="p">:</span> <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">code</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;bright_white&quot;</span><span class="p">),</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">code</span><span class="p">:</span> <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">code</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">),</span>
+    <span class="mi">3</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">code</span><span class="p">:</span> <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">code</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">),</span>
+    <span class="mi">4</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">code</span><span class="p">:</span> <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">code</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">),</span>
+    <span class="mi">5</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">code</span><span class="p">:</span> <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">code</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;bright_red&quot;</span><span class="p">),</span>
+<span class="p">}</span>
+<span class="n">request_msg_format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">:</span><span class="si">%d</span><span class="s2"> - </span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> - </span><span class="si">%.2f</span><span class="s2">ms&quot;</span>
+
+
+<div class="viewcode-block" id="get_request_msg_args"><a class="viewcode-back" href="../../../../03_source.html#feddit.app.utils.logging.get_request_msg_args">[docs]</a><span class="k">def</span> <span class="nf">get_request_msg_args</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">Response</span><span class="p">,</span>
+                         <span class="n">process_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Format the message for processing a http request.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        request (Request): http request.</span>
+<span class="sd">        response (Response): the corresponding response to the request.</span>
+<span class="sd">        process_time (float): process time for the http request.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: the requisite args to format the message</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response_status</span> <span class="o">=</span> <span class="n">HTTPStatus</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">response_status</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">response_status</span><span class="o">.</span><span class="n">phrase</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2"> Unknown Error&quot;</span>
+    <span class="n">method_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">method</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2"> HTTP/</span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">scope</span><span class="p">[</span><span class="s1">&#39;http_version&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+            <span class="n">method_path</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">process_time</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">args</span></div>
+
+
+<div class="viewcode-block" id="StandardFormatter"><a class="viewcode-back" href="../../../../03_source.html#feddit.app.utils.logging.StandardFormatter">[docs]</a><span class="k">class</span> <span class="nc">StandardFormatter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Logging Formatter to count warning / errors&quot;&quot;&quot;</span>
+    <span class="n">msg_format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(asctime)-22.19s</span><span class="s2"> </span><span class="si">%(name)-21s</span><span class="s2"> [</span><span class="si">%(levelname)s</span><span class="s2">]:    &quot;</span> \
+                 <span class="s2">&quot;</span><span class="si">%(message)s</span><span class="s2">    (</span><span class="si">%(filename)s</span><span class="s2">:</span><span class="si">%(lineno)d</span><span class="s2">)&quot;</span>
+
+<div class="viewcode-block" id="StandardFormatter.build_msg_format"><a class="viewcode-back" href="../../../../03_source.html#feddit.app.utils.logging.StandardFormatter.build_msg_format">[docs]</a>    <span class="k">def</span> <span class="nf">build_msg_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrapper function for building message customized format.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: log message format.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg_format</span></div>
+
+<div class="viewcode-block" id="StandardFormatter.format"><a class="viewcode-back" href="../../../../03_source.html#feddit.app.utils.logging.StandardFormatter.format">[docs]</a>    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">LogRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the given record to a log message.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            record (logging.LogRecord): log record to format a log message.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: formatted log message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log_fmt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_msg_format</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+        <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="n">log_fmt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">formatter</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">record</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ColorFormatter"><a class="viewcode-back" href="../../../../03_source.html#feddit.app.utils.logging.ColorFormatter">[docs]</a><span class="k">class</span> <span class="nc">ColorFormatter</span><span class="p">(</span><span class="n">StandardFormatter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Logging Formatter to add colors and count warning / errors&quot;&quot;&quot;</span>
+    <span class="n">msg_format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(asctime)-22.19s</span><span class="s2"> </span><span class="si">{bold_name}</span><span class="s2"> </span><span class="si">{color_levelname:29}</span><span class="s2">&quot;</span> \
+                 <span class="s2">&quot;</span><span class="si">%(message)s</span><span class="s2">    (</span><span class="si">%(filename)s</span><span class="s2">:</span><span class="si">%(lineno)d</span><span class="s2">)&quot;</span>
+
+    <span class="n">level_name_colors</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">level_name</span><span class="p">:</span> <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">level_name</span><span class="p">),</span>
+                                                      <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">),</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">level_name</span><span class="p">:</span> <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">level_name</span><span class="p">),</span>
+                                                     <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">),</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">level_name</span><span class="p">:</span> <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">level_name</span><span class="p">),</span>
+                                                        <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">),</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">level_name</span><span class="p">:</span> <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">level_name</span><span class="p">),</span>
+                                                      <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">),</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">level_name</span><span class="p">:</span> <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">((</span><span class="n">level_name</span><span class="p">),</span>
+                                                         <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;bright_red&quot;</span><span class="p">),</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">NOTSET</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">level_name</span><span class="p">:</span> <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">level_name</span><span class="p">),</span>
+                                                       <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="ColorFormatter.format_request_msg"><a class="viewcode-back" href="../../../../03_source.html#feddit.app.utils.logging.ColorFormatter.format_request_msg">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">format_request_msg</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                           <span class="n">method_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                           <span class="n">process_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the message for processing a http request.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            msg (str): http request.</span>
+<span class="sd">            host (str): host of the running service</span>
+<span class="sd">            port (int): listening port of the running service</span>
+<span class="sd">            method_path (str): method path information of the request.</span>
+<span class="sd">            status (str): status information including status code and statue phrase.</span>
+<span class="sd">            process_time (float): process time for the http request.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: the formatted message, containing process time and http request and</span>
+<span class="sd">            response related information</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">method_path</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">method_path</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">status_code</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">status</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">status_func</span> <span class="o">=</span> <span class="n">status_code_colors</span><span class="p">[</span><span class="n">status_code</span> <span class="o">//</span> <span class="mi">100</span><span class="p">]</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="n">status_func</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">msg</span> <span class="o">%</span> <span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">method_path</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">process_time</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ColorFormatter.build_msg_format"><a class="viewcode-back" href="../../../../03_source.html#feddit.app.utils.logging.ColorFormatter.build_msg_format">[docs]</a>    <span class="k">def</span> <span class="nf">build_msg_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">LogRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Rendering message with colored format.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            record (logging.LogRecord): log record to format a log message.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: log message format.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">color_func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">level_name_colors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">levelno</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span>
+        <span class="n">log_fmt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg_format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">color_levelname</span><span class="o">=</span><span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="n">color_func</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%(levelname)s</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;]:&quot;</span><span class="p">,</span>
+            <span class="n">bold_name</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%(name)-21s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">log_fmt</span></div>
+
+<div class="viewcode-block" id="ColorFormatter.format"><a class="viewcode-back" href="../../../../03_source.html#feddit.app.utils.logging.ColorFormatter.format">[docs]</a>    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">LogRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the given record to a log message.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            record (logging.LogRecord): log record to format a log message.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: formatted log message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">record</span><span class="o">.</span><span class="n">msg</span> <span class="o">==</span> <span class="n">request_msg_format</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_request_msg</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">record</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="n">record</span><span class="o">.</span><span class="n">msg</span> <span class="o">=</span> <span class="n">message</span>
+            <span class="n">record</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="p">()</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ColorFormatter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">record</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Zhiwei Zhang.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

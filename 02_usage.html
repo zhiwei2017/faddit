@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Usage &mdash; Fake reddit API 0.1.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Source" href="03_source.html" />
+    <link rel="prev" title="Fake reddit API" href="01_about.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Fake reddit API
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_about.html">Fake reddit API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#project-components">Project Components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#local-development">Local Development</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#requisite-environment-variables">Requisite Environment Variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running-the-api-service-locally">Running the API Service locally</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#via-docker-compose-recommended">Via Docker-Compose (Recommended)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#via-manual-setup">Via Manual Setup</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#running-tests-locally">Running Tests locally</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#docker-compose-way-recommended">Docker-Compose Way(Recommended)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#manual-configuration">Manual Configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#building-sphinx-documentation-locally">Building Sphinx Documentation locally</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="03_source.html">Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_contributing.html">Contributing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Fake reddit API</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Usage</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/02_usage.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this heading"></a></h1>
+<section id="project-components">
+<h2>Project Components<a class="headerlink" href="#project-components" title="Permalink to this heading"></a></h2>
+</section>
+<section id="local-development">
+<h2>Local Development<a class="headerlink" href="#local-development" title="Permalink to this heading"></a></h2>
+<p>In addition to the information in the previous section, the following sections give some overview on how to develop and run the service locally.</p>
+<section id="requisite-environment-variables">
+<h3>Requisite Environment Variables<a class="headerlink" href="#requisite-environment-variables" title="Permalink to this heading"></a></h3>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Requisite Environment Variables</span><a class="headerlink" href="#id1" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 29%" />
+<col style="width: 59%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>ENV</p></th>
+<th class="head"><p>Sample Value</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>MODE</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DEV</span></code>, <code class="docutils literal notranslate"><span class="pre">TEST</span></code>, <code class="docutils literal notranslate"><span class="pre">PROD</span></code></p></td>
+<td><p>Specifying deployment environment configurations (values = {DEV, TEST, PROD}).</p></td>
+</tr>
+<tr class="row-odd"><td><p>POSTGRES_SERVER</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dummy-postgres-server.example.com:5432</span></code></p></td>
+<td><p>Database server URI.</p></td>
+</tr>
+<tr class="row-even"><td><p>POSTGRES_USER</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dummy_user</span></code></p></td>
+<td><p>User name for database connection.</p></td>
+</tr>
+<tr class="row-odd"><td><p>POSTGRES_PASSWORD</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dummy_password</span></code></p></td>
+<td><p>User password for database connection.</p></td>
+</tr>
+<tr class="row-even"><td><p>POSTGRES_DB</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">feddit_dev</span></code></p></td>
+<td><p>Database name.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="running-the-api-service-locally">
+<h3>Running the API Service locally<a class="headerlink" href="#running-the-api-service-locally" title="Permalink to this heading"></a></h3>
+<p>In order to run the service you would need to use <a class="reference external" href="https://docs.docker.com/compose/">docker-compose</a>. This is done
+due to the amount of single components that need to be used at the same time.
+Once the service is running you can access its OpenAPI interface by visiting the
+url <code class="docutils literal notranslate"><span class="pre">http://localhost:8080/docs</span></code> in your browser.</p>
+<section id="via-docker-compose-recommended">
+<h4>Via Docker-Compose (Recommended)<a class="headerlink" href="#via-docker-compose-recommended" title="Permalink to this heading"></a></h4>
+<ol class="arabic">
+<li><p>Make sure the service <code class="docutils literal notranslate"><span class="pre">docker</span></code> is running.</p></li>
+<li><p>Build local development docker image via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./docker-compose.sh build feddit
+</pre></div>
+</div>
+</li>
+<li><p>Run the API Service by:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./docker-compose.sh run --service-ports --rm feddit
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>The service could also run in detached mode with flag <code class="docutils literal notranslate"><span class="pre">-d</span></code>.</p></li>
+</ul>
+</li>
+<li><p>To stop and remove the running containers, please run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./docker-compose.sh stop &amp;&amp; ./docker-compose.sh rm -f
+</pre></div>
+</div>
+</li>
+<li><p><em>Optional</em>: To remove all dangling images, please run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./docker-compose.sh clean
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="via-manual-setup">
+<h4>Via Manual Setup<a class="headerlink" href="#via-manual-setup" title="Permalink to this heading"></a></h4>
+<p>The manual installation is just a lengthy process to reproduce what docker
+compose would do. As part of the process explained below you would still be
+required to set up a postgres database either manually or using docker;
+in the examples, it is done with docker.</p>
+<ol class="arabic">
+<li><p>Setup a virtual (or conda) environment.</p></li>
+<li><p>Setup the used environment variables locally (see section above).</p></li>
+<li><p>Install the dependencies listed in file <code class="docutils literal notranslate"><span class="pre">requirements/base.txt</span></code> via</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install -r requirements/base.txt
+</pre></div>
+</div>
+</li>
+<li><p>Install the package with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install -e .
+</pre></div>
+</div>
+</li>
+<li><p>To host the database locally, execute the below docker commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ docker pull postgres:latest
+$ docker run -p 5432:5432 -e POSTGRES_PASSWORD=&#39;mysecretpassword&#39; --rm -d --name db postgres:latest
+</pre></div>
+</div>
+</li>
+</ol>
+<ol class="arabic" start="7">
+<li><p>Run the service via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python feddit/main.py
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+</section>
+<section id="running-tests-locally">
+<h3>Running Tests locally<a class="headerlink" href="#running-tests-locally" title="Permalink to this heading"></a></h3>
+<p>In order to run the tests you would need to use <a class="reference external" href="https://docs.docker.com/compose/">docker-compose</a>. This is done
+due to the amount of single components that need to be used at the same time.</p>
+<section id="docker-compose-way-recommended">
+<h4>Docker-Compose Way(Recommended)<a class="headerlink" href="#docker-compose-way-recommended" title="Permalink to this heading"></a></h4>
+<ol class="arabic">
+<li><p>Make sure the service <code class="docutils literal notranslate"><span class="pre">docker</span></code> is running.</p></li>
+<li><p>Build local development docker image via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./docker-compose.sh build test_feddit
+</pre></div>
+</div>
+</li>
+<li><p>Run the API Service by:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./docker-compose.sh run test_feddit
+</pre></div>
+</div>
+</li>
+<li><p><em>Optional</em>: To remove all dangling images, please run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./docker-compose.sh clean
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="manual-configuration">
+<h4>Manual Configuration<a class="headerlink" href="#manual-configuration" title="Permalink to this heading"></a></h4>
+<p>The manual installation is just a lengthy process to reproduce what docker
+compose would do. As part of the process explained below you would still be
+required to set up a postgres database either manually or using docker;
+in the examples, it is done with docker.</p>
+<ol class="arabic">
+<li><p>Setup a virtual (or conda) environment.</p></li>
+<li><p>Setup the used environment variables locally (see section above).</p></li>
+<li><p>To host the database locally, execute the below docker commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ docker pull postgres:latest
+$ docker run -p 5432:5432 -e POSTGRES_PASSWORD=&#39;mysecretpassword&#39; --rm -d --name db postgres:latest
+</pre></div>
+</div>
+</li>
+<li><p>Run the service via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ make test
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+</section>
+<section id="building-sphinx-documentation-locally">
+<h3>Building Sphinx Documentation locally<a class="headerlink" href="#building-sphinx-documentation-locally" title="Permalink to this heading"></a></h3>
+<p>To build the sphinx documentation for your API service, you need to do the following:</p>
+<ol class="arabic">
+<li><p>Setup a virtual (or conda) environment.</p></li>
+<li><p>Setup the used environment variables locally (see section above).</p></li>
+<li><p>Install the dependencies listed in file <code class="docutils literal notranslate"><span class="pre">requirements/doc.txt</span></code> via</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install -r requirements/doc.txt
+</pre></div>
+</div>
+</li>
+<li><p>Install the package with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install -e .
+</pre></div>
+</div>
+</li>
+<li><p>Create the documentation via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd docs
+$ make html
+</pre></div>
+</div>
+</li>
+</ol>
+<p>You can find the built documentation in the folder <cite>docs/build/html</cite>.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="01_about.html" class="btn btn-neutral float-left" title="Fake reddit API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="03_source.html" class="btn btn-neutral float-right" title="Source" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Zhiwei Zhang.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

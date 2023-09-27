@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>feddit.app.db.init_db &mdash; Fake reddit API 0.1.0 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Fake reddit API
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../01_about.html">Fake reddit API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../02_usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../03_source.html">Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../04_authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../05_contributing.html">Contributing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Fake reddit API</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">feddit.app.db.init_db</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for feddit.app.db.init_db</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">.session</span> <span class="kn">import</span> <span class="n">session_scope</span>
+<span class="kn">from</span> <span class="nn">.models.subfeddit</span> <span class="kn">import</span> <span class="n">Subfeddit</span><span class="p">,</span> <span class="n">Comment</span>
+
+
+<span class="n">positive_sentences</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;It looks great!&quot;</span><span class="p">,</span> <span class="s2">&quot;Love it.&quot;</span><span class="p">,</span> <span class="s2">&quot;Awesome.&quot;</span><span class="p">,</span> <span class="s2">&quot;Well done!&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;Looks decent.&quot;</span><span class="p">,</span> <span class="s2">&quot;What you did was right.&quot;</span><span class="p">,</span> <span class="s2">&quot;Thumbs up.&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;Like it a lot!&quot;</span><span class="p">,</span> <span class="s2">&quot;Good work.&quot;</span><span class="p">,</span> <span class="s2">&quot;Luckily you did it.&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;Proud of you.&quot;</span><span class="p">,</span> <span class="s2">&quot;Enjoy!&quot;</span><span class="p">]</span>
+<span class="n">negative_sentences</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;You have done it in a wrong way.&quot;</span><span class="p">,</span> <span class="s2">&quot;Don&#39;t do it.&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;Leave it alone.&quot;</span><span class="p">,</span> <span class="s2">&quot;Walk away!&quot;</span><span class="p">,</span> <span class="s2">&quot;Come on dude.&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;Why are you doing this?&quot;</span><span class="p">,</span> <span class="s2">&quot;Are you insane?&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;I don&#39;t like it at all.&quot;</span><span class="p">,</span> <span class="s2">&quot;Nooooooo!&quot;</span><span class="p">,</span> <span class="s2">&quot;Hate it!&quot;</span><span class="p">]</span>
+<span class="n">subfeddits</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Dummy Topic 1&quot;</span><span class="p">,</span> <span class="s2">&quot;Dummy Topic 2&quot;</span><span class="p">,</span> <span class="s2">&quot;Dummy Topic 3&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="generate_comment_texts"><a class="viewcode-back" href="../../../../03_source.html#feddit.app.db.init_db.generate_comment_texts">[docs]</a><span class="k">def</span> <span class="nf">generate_comment_texts</span><span class="p">(</span><span class="n">sentences</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate comment texts with given sentences.</span>
+
+<span class="sd">    The logic of this function is to combine the single sentence to each other</span>
+<span class="sd">    to generate a new sentence.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sentences (:obj:`list` of :obj:`str`]): base sentences for generating</span>
+<span class="sd">          complex sentences by combining any of them.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List[str]: Generated comment texts.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">comment_texts</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">sentences</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span>
+        <span class="n">combinations</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">([</span><span class="n">sentences</span><span class="p">]</span> <span class="o">*</span> <span class="n">i</span><span class="p">))</span>
+        <span class="n">comment_texts</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">combination</span><span class="p">)</span> <span class="k">for</span> <span class="n">combination</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">comment_texts</span></div>
+
+
+<div class="viewcode-block" id="flash_contents"><a class="viewcode-back" href="../../../../03_source.html#feddit.app.db.init_db.flash_contents">[docs]</a><span class="k">def</span> <span class="nf">flash_contents</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Flash contents to DB.&quot;&quot;&quot;</span>
+    <span class="n">comment_texts</span> <span class="o">=</span> <span class="n">generate_comment_texts</span><span class="p">(</span><span class="n">positive_sentences</span><span class="p">)</span>
+    <span class="n">comment_texts</span> <span class="o">+=</span> <span class="n">generate_comment_texts</span><span class="p">(</span><span class="n">negative_sentences</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">subfeddits</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">comments</span> <span class="o">=</span> <span class="p">[</span><span class="n">Comment</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;user_</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                            <span class="n">text</span><span class="o">=</span><span class="n">comment_text</span><span class="p">,</span>
+                            <span class="n">created_at</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">timestamp</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span> <span class="o">-</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">j</span><span class="p">)))</span>  <span class="c1"># noqa: E501</span>
+                    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">comment_text</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">comment_texts</span><span class="p">)]</span>
+        <span class="n">subfeddit</span> <span class="o">=</span> <span class="n">Subfeddit</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;admin_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">subfeddits</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
+                              <span class="n">description</span><span class="o">=</span><span class="n">subfeddits</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">comments</span><span class="o">=</span><span class="n">comments</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">session_scope</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">subfeddit</span><span class="p">)</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Zhiwei Zhang.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
