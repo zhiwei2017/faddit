@@ -44,7 +44,7 @@ def flash_contents() -> None:
     for i in range(1, len(subfeddits) + 1):
         comments = [Comment(username=f"user_{j}",  # type: ignore
                             text=comment_text,
-                            created_at=datetime.datetime.timestamp(datetime.datetime.utcnow() - datetime.timedelta(hours=j)))  # noqa: E501
+                            created_at=datetime.datetime.timestamp(datetime.datetime.utcnow() - datetime.timedelta(hours=len(comment_texts) - j)))  # noqa: E501
                     for j, comment_text in enumerate(comment_texts)]
         subfeddit = Subfeddit(username=f"admin_{i}", title=subfeddits[i - 1],  # type: ignore
                               description=subfeddits[i - 1], comments=comments)
